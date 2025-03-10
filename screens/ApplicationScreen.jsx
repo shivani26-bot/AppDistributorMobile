@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import Header from '../components/Header';
-import {DataTable} from 'react-native-paper';
+import {DataTable, Provider} from 'react-native-paper';
 import {useDispatch} from 'react-redux';
 import {deleteApplication} from '../redux/feature/deleteAppSlice';
 import {fetchAppList} from '../redux/feature/getAppListSlice';
@@ -16,7 +16,7 @@ import {fetchAppList} from '../redux/feature/getAppListSlice';
 export default function ApplicationScreen({navigation}) {
   // export default function ApplicationScreen() {
   const [page, setPage] = useState(0);
-  const [numberOfItemsPerPageList] = useState([8, 10, 11]);
+  const [numberOfItemsPerPageList] = useState([4, 6, 8]);
   const [itemsPerPage, onItemsPerPageChange] = useState(
     numberOfItemsPerPageList[0],
   );
@@ -132,69 +132,71 @@ export default function ApplicationScreen({navigation}) {
   }, [itemsPerPage]);
 
   return (
-    <View style={styles.container}>
-      <Header />
-      {/* <ScrollView horizontal={true}> */}
-      <View style={styles.tableContainer}>
-        <ScrollView>
-          <DataTable style={styles.elevatedTable}>
-            <DataTable.Header>
-              <DataTable.Title style={styles.appTitle}>
-                App Name
-              </DataTable.Title>
-              <DataTable.Title style={styles.osTitle}>OS</DataTable.Title>
-              <DataTable.Title style={styles.releaseTitle}>
-                Release Type
-              </DataTable.Title>
-              <DataTable.Title style={styles.platformTitle}>
-                Platform
-              </DataTable.Title>
-              <DataTable.Title style={styles.actionTitle}>
-                Actions
-              </DataTable.Title>
-            </DataTable.Header>
+    <Provider>
+      <View style={styles.container}>
+        <Header />
+        {/* <ScrollView horizontal={true}> */}
+        <View style={styles.tableContainer}>
+          <ScrollView>
+            <DataTable style={styles.elevatedTable}>
+              <DataTable.Header>
+                <DataTable.Title style={styles.appTitle}>
+                  App Name
+                </DataTable.Title>
+                <DataTable.Title style={styles.osTitle}>OS</DataTable.Title>
+                <DataTable.Title style={styles.releaseTitle}>
+                  Release Type
+                </DataTable.Title>
+                <DataTable.Title style={styles.platformTitle}>
+                  Platform
+                </DataTable.Title>
+                <DataTable.Title style={styles.actionTitle}>
+                  Actions
+                </DataTable.Title>
+              </DataTable.Header>
 
-            {data.slice(from, to).map((item, index) => (
-              <DataTable.Row key={index}>
-                <DataTable.Cell style={styles.app}>
-                  <TouchableOpacity
-                    onPress={() => navigation.navigate('Release')}>
-                    <Text style={styles.appName}>{item.appName}</Text>
-                  </TouchableOpacity>
-                </DataTable.Cell>
-                <DataTable.Cell style={styles.os}>{item.os}</DataTable.Cell>
-                <DataTable.Cell style={styles.release}>
-                  {item.releaseType}
-                </DataTable.Cell>
-                <DataTable.Cell style={styles.platform}>
-                  {item.platform}
-                </DataTable.Cell>
-                <DataTable.Cell style={styles.action}>
-                  <TouchableOpacity onPress={handleDelete}>
-                    <Image
-                      source={require('../asset/images/trash.png')}
-                      style={styles.deleteIcon}
-                    />
-                  </TouchableOpacity>
-                </DataTable.Cell>
-              </DataTable.Row>
-            ))}
+              {data.slice(from, to).map((item, index) => (
+                <DataTable.Row key={index}>
+                  <DataTable.Cell style={styles.app}>
+                    <TouchableOpacity
+                      onPress={() => navigation.navigate('Release')}>
+                      <Text style={styles.appName}>{item.appName}</Text>
+                    </TouchableOpacity>
+                  </DataTable.Cell>
+                  <DataTable.Cell style={styles.os}>{item.os}</DataTable.Cell>
+                  <DataTable.Cell style={styles.release}>
+                    {item.releaseType}
+                  </DataTable.Cell>
+                  <DataTable.Cell style={styles.platform}>
+                    {item.platform}
+                  </DataTable.Cell>
+                  <DataTable.Cell style={styles.action}>
+                    <TouchableOpacity onPress={handleDelete}>
+                      <Image
+                        source={require('../asset/images/trash.png')}
+                        style={styles.deleteIcon}
+                      />
+                    </TouchableOpacity>
+                  </DataTable.Cell>
+                </DataTable.Row>
+              ))}
 
-            <DataTable.Pagination
-              page={page}
-              numberOfPages={Math.ceil(data.length / itemsPerPage)}
-              onPageChange={page => setPage(page)}
-              label={`${from + 1}-${to} of ${data.length}`}
-              numberOfItemsPerPageList={numberOfItemsPerPageList}
-              numberOfItemsPerPage={itemsPerPage}
-              onItemsPerPageChange={onItemsPerPageChange}
-              showFastPaginationControls
-              selectPageDropdownLabel={'Rows per page'}
-            />
-          </DataTable>
-        </ScrollView>
+              <DataTable.Pagination
+                page={page}
+                numberOfPages={Math.ceil(data.length / itemsPerPage)}
+                onPageChange={page => setPage(page)}
+                label={`${from + 1}-${to} of ${data.length}`}
+                numberOfItemsPerPageList={numberOfItemsPerPageList}
+                numberOfItemsPerPage={itemsPerPage}
+                onItemsPerPageChange={onItemsPerPageChange}
+                showFastPaginationControls
+                selectPageDropdownLabel={'Rows per page'}
+              />
+            </DataTable>
+          </ScrollView>
+        </View>
       </View>
-    </View>
+    </Provider>
   );
 }
 
