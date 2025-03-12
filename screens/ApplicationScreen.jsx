@@ -1,4 +1,5 @@
 import {
+  Alert,
   FlatList,
   Image,
   RefreshControl,
@@ -40,8 +41,23 @@ export default function ApplicationScreen() {
     console.log('delappid', appId);
     console.log('delete icon clicked');
     console.log('get all the application');
-    dispatch(deleteApplication({accessToken, appId}));
-    dispatch(fetchAppList(accessToken));
+    dispatch(deleteApplication({accessToken, appId}))
+      .then(response => {
+        console.log('res', response);
+        if (response.payload.success) {
+          Alert.alert('Success', response.payload.message);
+          dispatch(fetchAppList(accessToken));
+        } else {
+          Alert.alert(
+            'Error',
+            response.payload.message || 'Failed to delete the application',
+          );
+        }
+      })
+      .catch(error => {
+        console.log('error during delete', error);
+        Alert.alert('Error', 'Something went wrong. Please try again later');
+      });
   };
 
   const [refreshing, setRefreshing] = useState(false);
@@ -52,6 +68,25 @@ export default function ApplicationScreen() {
     setTimeout(() => {
       setRefreshing(false);
     }, 2000);
+  };
+
+  const showDeleteConfirmation = appId => {
+    Alert.alert(
+      'Delete Application',
+      'Are you sure you want to delete this application?',
+      [
+        {
+          text: 'No',
+          onPress: () => console.log('Cancel delete'),
+          style: 'cancel',
+        },
+        {
+          text: 'Yes',
+          onPress: () => handleDelete(appId),
+        },
+      ],
+      {cancelable: true}, // dismiss the alert by clicking outside
+    );
   };
   return (
     <View style={styles.container}>
@@ -100,7 +135,16 @@ export default function ApplicationScreen() {
                   </View>
 
                   <View style={styles.actions}>
-                    <TouchableOpacity onPress={() => handleDelete(item._id)}>
+                    {/* <TouchableOpacity onPress={() => handleDelete(item._id)}>
+                      <View style={styles.iconBackground}>
+                        <Image
+                          source={require('../asset/images/trash.png')}
+                          style={styles.deleteIcon}
+                        />
+                      </View>
+                    </TouchableOpacity> */}
+                    <TouchableOpacity
+                      onPress={() => showDeleteConfirmation(item._id)}>
                       <View style={styles.iconBackground}>
                         <Image
                           source={require('../asset/images/trash.png')}
