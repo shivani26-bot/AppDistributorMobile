@@ -4,7 +4,7 @@ export const deleteApplication = createAsyncThunk(
   'deleteApplication',
   async ({accessToken, appId}) => {
     try {
-      console.log(accessToken, appId);
+      console.log('atai', accessToken, appId);
 
       const response = await fetch(
         `http://10.0.2.2:8000/api/app/deleteApplication`,
@@ -15,9 +15,9 @@ export const deleteApplication = createAsyncThunk(
             Authorization: `Bearer ${accessToken}`,
           },
           credentials: 'include',
-          body: {
+          body: JSON.stringify({
             _id: appId,
-          },
+          }),
         },
       );
       const responseData = await response.json();

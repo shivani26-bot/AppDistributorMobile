@@ -1,6 +1,7 @@
 import {
   FlatList,
   Image,
+  RefreshControl,
   ScrollView,
   StyleSheet,
   Text,
@@ -28,7 +29,7 @@ export default function ApplicationScreen() {
   console.log('at', accessToken);
   const dispatch = useDispatch();
   useEffect(() => {
-    dispatch(fetchAppList(accessToken));
+    if (accessToken) dispatch(fetchAppList(accessToken));
     console.log('get all the application');
   }, []);
 
@@ -39,10 +40,19 @@ export default function ApplicationScreen() {
     console.log('delappid', appId);
     console.log('delete icon clicked');
     console.log('get all the application');
-    dispatch(deleteApplication(accessToken, appId));
+    dispatch(deleteApplication({accessToken, appId}));
     dispatch(fetchAppList(accessToken));
   };
 
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = () => {
+    setRefreshing(true);
+    dispatch(fetchAppList(accessToken));
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 2000);
+  };
   return (
     <View style={styles.container}>
       <Header />
@@ -51,6 +61,14 @@ export default function ApplicationScreen() {
         <FlatList
           style={styles.scroll}
           data={applicationList}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              colors={['#9Bd35A', '#689F38']}
+              progressBackgroundColor="#fff"
+            />
+          }
           renderItem={({item}) => {
             console.log('item', item);
             console.log('itemid', item._id);
@@ -176,6 +194,26 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 });
+
+// const [data, setData] = useState([1, 2, 3, 4, 5]);
+// const [refreshing, setRefreshing] = useState(false);
+
+// // Function to simulate fetching new data (refreshing)
+// const onRefresh = () => {
+//   setRefreshing(true);
+//   // Simulate fetching data from an API (or any async operation)
+//   dispatch(fetchAppList(accessToken));
+//   setTimeout(() => {
+//     // setData([6, 7, 8, 9, 10]); // Update data to simulate new data
+//     setRefreshing(false); // Turn off the refreshing indicator
+//   }, 2000);
+// };
+
+// refreshing: This state controls whether the spinner is visible during the refresh. It is set to true when a refresh starts and set to false when the refresh is complete.
+// onRefresh: This function is called when the user pulls to refresh. In this example, it simulates fetching new data by updating the data state after a delay (using setTimeout).
+// RefreshControl: The RefreshControl component is used to add the pull-to-refresh functionality. It is placed inside the FlatList's refreshControl prop.
+// colors: An array of colors to set for the spinner.
+// progressBackgroundColor: Background color for the spinner (optional).
 
 // const styles = StyleSheet.create({
 //   container: {

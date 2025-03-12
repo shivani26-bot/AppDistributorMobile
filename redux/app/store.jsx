@@ -19,6 +19,7 @@ import authRegisterReducer from '../features/authRegisterSlice';
 import authLogoutReducer from '../features/authLogoutSlice';
 import getAppListSlice from '../features/getAppListSlice';
 import deleteAppSlice from '../features/deleteAppSlice';
+import getReleasesListSlice from '../features/getReleasesListSlice';
 const store = configureStore({
   reducer: {
     authLogin: authLoginReducer,
@@ -26,6 +27,7 @@ const store = configureStore({
     authLogout: authLogoutReducer,
     appList: getAppListSlice,
     deleteApp: deleteAppSlice,
+    releasesList: getReleasesListSlice,
   },
 });
 
