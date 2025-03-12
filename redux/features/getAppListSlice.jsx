@@ -1,13 +1,13 @@
 import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
 
-export const deleteApplication = createAsyncThunk(
-  'deleteApplication',
-  async ({accessToken, appId}) => {
+export const fetchAppList = createAsyncThunk(
+  'fetchAppList',
+  async accessToken => {
     try {
-      console.log(accessToken, appId);
+      console.log(accessToken);
 
       const response = await fetch(
-        `http://localhost:8000/api/app/deleteApplication`,
+        `http://10.0.2.2:8000/api/app/getApplication`,
         {
           method: 'GET',
           headers: {
@@ -15,12 +15,6 @@ export const deleteApplication = createAsyncThunk(
             Authorization: `Bearer ${accessToken}`,
           },
           credentials: 'include',
-          //   body: JSON.stringify({
-          //     build,
-          //     version,
-          //     releaseNote,
-          //     applicationId: appId,
-          //   }),
         },
       );
       const responseData = await response.json();
@@ -33,8 +27,8 @@ export const deleteApplication = createAsyncThunk(
   },
 );
 
-const deleteAppSlice = createSlice({
-  name: 'deleteApp',
+const getAppListSlice = createSlice({
+  name: 'appList',
   initialState: {
     isLoading: false,
     data: null,
@@ -43,21 +37,23 @@ const deleteAppSlice = createSlice({
   },
 
   extraReducers: builder => {
-    builder.addCase(deleteApplication.pending, state => {
+    builder.addCase(fetchAppList.pending, state => {
       state.isLoading = true;
     });
-    builder.addCase(deleteApplication.fulfilled, (state, action) => {
+    builder.addCase(fetchAppList.fulfilled, (state, action) => {
       console.log('action', action); //{type: 'postLoginData/fulfilled', payload: {…}, meta: {…}}
       state.isLoading = false;
       state.items = action.payload.data;
       state.data = action.payload;
       state.isError = false;
       console.log('action', action); //{type: 'postLoginData/fulfilled', payload: {…}, meta: {…}}
+      console.log('stateitems', state.items);
+      console.log(state.data);
     });
-    builder.addCase(deleteApplication.rejected, state => {
+    builder.addCase(fetchAppList.rejected, state => {
       state.isError = true;
     });
   },
 });
 
-export default deleteAppSlice.reducer;
+export default getAppListSlice.reducer;

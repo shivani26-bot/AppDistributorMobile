@@ -55,7 +55,8 @@ export default function Release() {
   return (
     <View style={styles.container}>
       <View style={styles.releaseContainer}>
-        <ScrollView>
+        <Text style={styles.title}>Releases</Text>
+        <ScrollView style={styles.scroll}>
           {data.map((item, key) => {
             return (
               <View style={styles.card}>
@@ -104,6 +105,16 @@ const styles = StyleSheet.create({
   },
   fileExt: {
     marginBottom: 15,
+  },
+  scroll: {
+    marginBottom: 35,
+  },
+  title: {
+    fontSize: 30,
+    fontWeight: 'bold',
+    color: 'white',
+    marginVertical: 10,
+    marginHorizontal: 10,
   },
   releaseContainer: {
     backgroundColor: 'red',

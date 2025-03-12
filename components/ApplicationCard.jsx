@@ -1,32 +1,44 @@
 import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import React from 'react';
 
-export default function ApplicationCard() {
+export default function ApplicationCard({appData}) {
+  console.log('appsdata', appData);
   const handleDelete = () => {
     console.log('delete icon clicked');
     console.log('get all the application');
     // dispatch(deleteApplication());
     // dispatch(fetchAppList());
   };
+
   return (
     // <View style={styles.container}>
     <View style={styles.card}>
       <View style={styles.firstRow}>
-        <Text style={[styles.appName, styles.text]}>Shopify</Text>
-        <Text style={[styles.osType, styles.text]}>Windows</Text>
+        <Text style={styles.text}>
+          {appData.appName}{' '}
+          <Image source={{uri: appData.appIcon}} style={styles.appIcon} />
+        </Text>
+
+        <Text style={styles.text}>{appData.osType}</Text>
       </View>
-      <View>
-        <Text style={styles.releaseLabel}>Release Type:</Text>
-        <Text style={[styles.releaseType, styles.text]}>Alpha</Text>
+      <View style={styles.secondRow}>
+        <View>
+          <Text style={styles.label}>Release Type:</Text>
+          <Text style={styles.text}>{appData.releaseType}</Text>
+        </View>
+        <View>
+          <Text style={styles.label}>PlatformType:</Text>
+          <Text style={styles.text}>{appData.platformType}</Text>
+        </View>
       </View>
-      <View style={styles.actions}>
+      {/* <View style={styles.actions}>
         <TouchableOpacity onPress={handleDelete}>
           <Image
             source={require('../asset/images/trash.png')}
             style={styles.deleteIcon}
           />
         </TouchableOpacity>
-      </View>
+      </View> */}
     </View>
     // </View>
   );
@@ -36,6 +48,10 @@ const styles = StyleSheet.create({
   //   container: {
   //     flex: 1,
   //   },
+  appIcon: {
+    width: 20,
+    height: 20,
+  },
   card: {
     padding: 15,
     marginVertical: 10,
@@ -69,11 +85,16 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginBottom: 10,
   },
+
+  secondRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
   text: {
     fontSize: 20,
     fontWeight: 'bold',
   },
-  releaseLabel: {
+  label: {
     fontSize: 18,
   },
 });

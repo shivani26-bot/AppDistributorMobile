@@ -1,4 +1,5 @@
 import {
+  FlatList,
   Image,
   ScrollView,
   StyleSheet,
@@ -9,213 +10,67 @@ import {
 import React, {useEffect, useState} from 'react';
 import Header from '../components/Header';
 import {DataTable, Provider} from 'react-native-paper';
-import {useDispatch} from 'react-redux';
-import {deleteApplication} from '../redux/feature/deleteAppSlice';
-import {fetchAppList} from '../redux/feature/getAppListSlice';
-
-export default function ApplicationScreen({navigation}) {
+import {useDispatch, useSelector} from 'react-redux';
+import {deleteApplication} from '../redux/features/deleteAppSlice';
+import {fetchAppList} from '../redux/features/getAppListSlice';
+import {useNavigation} from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+export default function ApplicationScreen() {
+  // export default function ApplicationScreen({navigation}) {
   // export default function ApplicationScreen() {
-  const [page, setPage] = useState(0);
-  const [numberOfItemsPerPageList] = useState([4, 6, 8]);
-  const [itemsPerPage, onItemsPerPageChange] = useState(
-    numberOfItemsPerPageList[0],
-  );
 
-  const data = [
-    {
-      appName: 'MyApp',
-      os: 'iOS',
-      releaseType: 'Beta',
-      platform: 'Mobile',
-    },
-    {
-      appName: 'SuperApp',
-      os: 'Android',
-      releaseType: 'Production',
-      platform: 'Mobile',
-    },
-    {
-      appName: 'TechieApp',
-      os: 'Windows',
-      releaseType: 'Alpha',
-      platform: 'Desktop',
-    },
-    {
-      appName: 'ShopEasy',
-      os: 'macOS',
-      releaseType: 'Production',
-      platform: 'Desktop',
-    },
-    {
-      appName: 'GameTime',
-      os: 'Android',
-      releaseType: 'Beta',
-      platform: 'Mobile',
-    },
-    {
-      appName: 'StudyHub',
-      os: 'iOS',
-      releaseType: 'Production',
-      platform: 'Mobile',
-    },
-    {
-      appName: 'Weather Pro',
-      os: 'Windows',
-      releaseType: 'Alpha',
-      platform: 'Desktop',
-    },
-    {
-      appName: 'QuickNotes',
-      os: 'macOS',
-      releaseType: 'Beta',
-      platform: 'Desktop',
-    },
-    {
-      appName: 'FitTrack',
-      os: 'Android',
-      releaseType: 'Production',
-      platform: 'Mobile',
-    },
-    {
-      appName: 'CodeFlow',
-      os: 'Linux',
-      releaseType: 'Alpha',
-      platform: 'Desktop',
-    },
-    {
-      appName: 'FitTrack',
-      os: 'Android',
-      releaseType: 'Production',
-      platform: 'Mobile',
-    },
-    {
-      appName: 'CodeFlow',
-      os: 'Linux',
-      releaseType: 'Alpha',
-      platform: 'Desktop',
-    },
-    {
-      appName: 'FitTrack',
-      os: 'Android',
-      releaseType: 'Production',
-      platform: 'Mobile',
-    },
-    {
-      appName: 'CodeFlow',
-      os: 'Linux',
-      releaseType: 'Alpha',
-      platform: 'Desktop',
-    },
-  ];
-  console.log('navigate', navigation);
+  const navigation = useNavigation();
+
+  // console.log('navigate', navigation);
+  // console.log(AsyncStorage);
+
+  const accessToken = AsyncStorage.getItem('token');
+  console.log('at', accessToken);
   const dispatch = useDispatch();
   useEffect(() => {
-    // dispatch(fetchAppList());
+    dispatch(fetchAppList(accessToken));
     console.log('get all the application');
   }, []);
-  const handleDelete = () => {
+
+  const applicationList = useSelector(state => state.appList.items);
+  console.log(applicationList);
+
+  const handleDelete = appId => {
+    console.log('delappid', appId);
     console.log('delete icon clicked');
     console.log('get all the application');
-    // dispatch(deleteApplication());
-    // dispatch(fetchAppList());
+    dispatch(deleteApplication(accessToken, appId));
+    dispatch(fetchAppList(accessToken));
   };
-
-  const handleAppPress = item => {
-    console.log(item);
-    // , {appName: item.appName}
-    navigation.navigate('Release');
-  };
-  const from = page * itemsPerPage;
-  const to = Math.min((page + 1) * itemsPerPage, data.length);
-  useEffect(() => {
-    setPage(0);
-  }, [itemsPerPage]);
-
-  // return (
-  //   <Provider>
-  //     <View style={styles.container}>
-  //       <Header />
-  //       {/* <ScrollView horizontal={true}> */}
-  //       <View style={styles.tableContainer}>
-  //         <ScrollView>
-  //           <DataTable style={styles.elevatedTable}>
-  //             <DataTable.Header>
-  //               <DataTable.Title style={styles.appTitle}>
-  //                 App Name
-  //               </DataTable.Title>
-  //               <DataTable.Title style={styles.osTitle}>OS</DataTable.Title>
-  //               <DataTable.Title style={styles.releaseTitle}>
-  //                 Release Type
-  //               </DataTable.Title>
-  //               <DataTable.Title style={styles.platformTitle}>
-  //                 Platform
-  //               </DataTable.Title>
-  //               <DataTable.Title style={styles.actionTitle}>
-  //                 Actions
-  //               </DataTable.Title>
-  //             </DataTable.Header>
-
-  //             {data.slice(from, to).map((item, index) => (
-  //               <DataTable.Row key={index}>
-  //                 <DataTable.Cell style={styles.app}>
-  //                   <TouchableOpacity
-  //                     onPress={() => navigation.navigate('Release')}>
-  //                     <Text style={styles.appName}>{item.appName}</Text>
-  //                   </TouchableOpacity>
-  //                 </DataTable.Cell>
-  //                 <DataTable.Cell style={styles.os}>{item.os}</DataTable.Cell>
-  //                 <DataTable.Cell style={styles.release}>
-  //                   {item.releaseType}
-  //                 </DataTable.Cell>
-  //                 <DataTable.Cell style={styles.platform}>
-  //                   {item.platform}
-  //                 </DataTable.Cell>
-  //                 <DataTable.Cell style={styles.action}>
-  //                   <TouchableOpacity onPress={handleDelete}>
-  //                     <Image
-  //                       source={require('../asset/images/trash.png')}
-  //                       style={styles.deleteIcon}
-  //                     />
-  //                   </TouchableOpacity>
-  //                 </DataTable.Cell>
-  //               </DataTable.Row>
-  //             ))}
-
-  //             <DataTable.Pagination
-  //               page={page}
-  //               numberOfPages={Math.ceil(data.length / itemsPerPage)}
-  //               onPageChange={page => setPage(page)}
-  //               label={`${from + 1}-${to} of ${data.length}`}
-  //               numberOfItemsPerPageList={numberOfItemsPerPageList}
-  //               numberOfItemsPerPage={itemsPerPage}
-  //               onItemsPerPageChange={onItemsPerPageChange}
-  //               showFastPaginationControls
-  //               selectPageDropdownLabel={'Rows per page'}
-  //             />
-  //           </DataTable>
-  //         </ScrollView>
-  //       </View>
-  //     </View>
-  //   </Provider>
-  // );
 
   return (
     <View style={styles.container}>
       <Header />
-      <ScrollView>
-        <View style={styles.appContainer}>
-          {data.map((item, key) => {
+
+      <View style={styles.appContainer}>
+        <FlatList
+          style={styles.scroll}
+          data={applicationList}
+          renderItem={({item}) => {
+            console.log('item', item);
+            console.log('itemid', item._id);
             return (
               <View style={styles.card}>
                 <TouchableOpacity
-                  onPress={() => navigation.navigate('Release')}>
+                  onPress={() =>
+                    navigation.navigate('Release', {appData: item})
+                  }>
                   <View style={styles.appDetails}>
                     <View style={styles.firstRow}>
                       <Text style={[styles.appName, styles.text]}>
                         {item.appName}
+                        <Image
+                          source={{uri: item.appIcon}}
+                          style={styles.appIcon}
+                        />
                       </Text>
                       <Text style={[styles.osType, styles.text]}>
-                        {item.os}
+                        {item.osType}
                       </Text>
                     </View>
                     <View>
@@ -225,13 +80,24 @@ export default function ApplicationScreen({navigation}) {
                       </Text>
                     </View>
                   </View>
+
+                  <View style={styles.actions}>
+                    <TouchableOpacity onPress={() => handleDelete(item._id)}>
+                      <View style={styles.iconBackground}>
+                        <Image
+                          source={require('../asset/images/trash.png')}
+                          style={styles.deleteIcon}
+                        />
+                      </View>
+                    </TouchableOpacity>
+                  </View>
                 </TouchableOpacity>
               </View>
             );
-            console.log('item', item);
-          })}
-        </View>
-      </ScrollView>
+          }}
+          keyExtractor={(item, index) => index.toString()}
+        />
+      </View>
     </View>
   );
 }
@@ -241,10 +107,20 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#616C6F',
   },
+  scroll: {
+    marginBottom: 90,
+  },
   appContainer: {
     // width: '100%',
     // height: 'auto',
     marginVertical: 10,
+  },
+  appIcon: {
+    width: 20,
+    height: 20,
+  },
+  appName: {
+    marginRight: 10,
   },
   card: {
     padding: 15,
@@ -258,9 +134,25 @@ const styles = StyleSheet.create({
     shadowRadius: 5,
     backgroundColor: '#fff',
   },
-  appDetails: {
+  // appDetails: {
+  //   flex: 1,
+  // },
+  actions: {
+    // marginTop: 20,
+    marginVertical: 10,
     flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
   },
+  deleteIcon: {
+    width: 20,
+    height: 20,
+
+    // marginLeft: 40,
+    // flex: 1,
+    // justifyContent: 'flex-end',
+  },
+
   firstRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -272,6 +164,16 @@ const styles = StyleSheet.create({
   },
   releaseLabel: {
     fontSize: 18,
+  },
+  iconBackground: {
+    width: 50,
+    height: 'auto',
+    padding: 10,
+    backgroundColor: '#6A89CC',
+    borderRadius: 10,
+    elevation: 5,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });
 
@@ -355,3 +257,114 @@ const styles = StyleSheet.create({
 // apply from: "../../node_modules/react-native-vector-icons/fonts.gradle"
 // add this to anroid/app/build.gradle
 // npm install react-native-vector-icons
+
+{
+  /* 
+  
+    const [page, setPage] = useState(0);
+  const navigation = useNavigation();
+
+  const [itemsPerPage, onItemsPerPageChange] = useState(
+    numberOfItemsPerPageList[0],
+  );
+    const from = page * itemsPerPage;
+  const to = Math.min((page + 1) * itemsPerPage, data.length);
+  useEffect(() => {
+    setPage(0);
+  }, [itemsPerPage]);
+  
+  {data.map((item, key) => {
+            return (
+              <View style={styles.card}>
+                <TouchableOpacity
+                  onPress={() => navigation.navigate('Release')}>
+                  <View style={styles.appDetails}>
+                    <View style={styles.firstRow}>
+                      <Text style={[styles.appName, styles.text]}>
+                        {item.appName}
+                      </Text>
+                      <Text style={[styles.osType, styles.text]}>
+                        {item.os}
+                      </Text>
+                    </View>
+                    <View>
+                      <Text style={styles.releaseLabel}>Release Type:</Text>
+                      <Text style={[styles.releaseType, styles.text]}>
+                        {item.releaseType}
+                      </Text>
+                    </View>
+                  </View>
+                </TouchableOpacity>
+              </View>
+            );
+            console.log('item', item);
+          })} */
+}
+
+// return (
+//   <Provider>
+//     <View style={styles.container}>
+//       <Header />
+//       {/* <ScrollView horizontal={true}> */}
+//       <View style={styles.tableContainer}>
+//         <ScrollView>
+//           <DataTable style={styles.elevatedTable}>
+//             <DataTable.Header>
+//               <DataTable.Title style={styles.appTitle}>
+//                 App Name
+//               </DataTable.Title>
+//               <DataTable.Title style={styles.osTitle}>OS</DataTable.Title>
+//               <DataTable.Title style={styles.releaseTitle}>
+//                 Release Type
+//               </DataTable.Title>
+//               <DataTable.Title style={styles.platformTitle}>
+//                 Platform
+//               </DataTable.Title>
+//               <DataTable.Title style={styles.actionTitle}>
+//                 Actions
+//               </DataTable.Title>
+//             </DataTable.Header>
+
+//             {data.slice(from, to).map((item, index) => (
+//               <DataTable.Row key={index}>
+//                 <DataTable.Cell style={styles.app}>
+//                   <TouchableOpacity
+//                     onPress={() => navigation.navigate('Release')}>
+//                     <Text style={styles.appName}>{item.appName}</Text>
+//                   </TouchableOpacity>
+//                 </DataTable.Cell>
+//                 <DataTable.Cell style={styles.os}>{item.os}</DataTable.Cell>
+//                 <DataTable.Cell style={styles.release}>
+//                   {item.releaseType}
+//                 </DataTable.Cell>
+//                 <DataTable.Cell style={styles.platform}>
+//                   {item.platform}
+//                 </DataTable.Cell>
+//                 <DataTable.Cell style={styles.action}>
+//                   <TouchableOpacity onPress={handleDelete}>
+//                     <Image
+//                       source={require('../asset/images/trash.png')}
+//                       style={styles.deleteIcon}
+//                     />
+//                   </TouchableOpacity>
+//                 </DataTable.Cell>
+//               </DataTable.Row>
+//             ))}
+
+//             <DataTable.Pagination
+//               page={page}
+//               numberOfPages={Math.ceil(data.length / itemsPerPage)}
+//               onPageChange={page => setPage(page)}
+//               label={`${from + 1}-${to} of ${data.length}`}
+//               numberOfItemsPerPageList={numberOfItemsPerPageList}
+//               numberOfItemsPerPage={itemsPerPage}
+//               onItemsPerPageChange={onItemsPerPageChange}
+//               showFastPaginationControls
+//               selectPageDropdownLabel={'Rows per page'}
+//             />
+//           </DataTable>
+//         </ScrollView>
+//       </View>
+//     </View>
+//   </Provider>
+// );
